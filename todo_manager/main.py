@@ -1,4 +1,6 @@
 from storage import save_tasks, load_tasks
+from datetime import datetime
+
 tasks = []
 
 def add_task():
@@ -6,7 +8,8 @@ def add_task():
     task = {
         "id": get_next_id(),
         "title": title,
-        "done": False
+        "done": False,
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")
     }
     tasks.append(task)
     save_tasks(tasks)
@@ -15,13 +18,12 @@ def show_tasks():
     if not tasks:
         print("No tasks found.")
     else:
-        for index, task in enumerate(tasks, start=1):
-            # status = "✅" if task["done"] else "⬜"
-            # print(index, status, task["title"])
+        for task in tasks:
             if task["done"]:
-                print(index, "✅", task["title"])
+                print(task["id"], "✅", task["title"])
             else:
-                print(index, "⬜", task["title"])
+                print(task["id"], "⬜", task["title"])
+            print("   Created:", task["created_at"])
 
 def menu():
     while True:
