@@ -4,6 +4,7 @@ tasks = []
 def add_task():
     title = input("Enter task title: ")
     task = {
+        "id": get_next_id(),
         "title": title,
         "done": False
     }
@@ -56,48 +57,70 @@ def complete_task():
         print("No tasks found.")
         return
     try:
-        number = int(input("Enter the task number: "))
+        task_id = int(input("Enter task id: "))
     except ValueError:
         print("Please enter a valid number.")
         return
-    if number < 1 or number > len(tasks):
-        print("Invalid task number.")
-    else:
-        tasks[number - 1]["done"] = True
-        save_tasks(tasks)
-        print("Task completed.")
+
+    task = find_task_by_id(task_id)
+    
+    if task is None:
+        print("Task not found.")
+        return
+    
+    task["done"] = True
+    save_tasks(tasks)
+    print("Task completed.")
 
 def delete_task():
     if not tasks:
         print("No tasks found.")
         return
     try:
-        number = int(input("Enter the task number: "))
+        task_id = int(input("Enter task id: "))
     except ValueError:
         print("Please enter a valid number.")
         return
-    if number < 1 or number > len(tasks):
-        print("Invalid task number.")
-    else:
-        tasks.pop(number - 1)
-        save_tasks(tasks)
-        print("Task deleted.")
+    
+    task = find_task_by_id(task_id)
+
+    if task is None:
+        print("Task not found.")
+        return
+    tasks.remove(task)
+    save_tasks(tasks)
+    print("Task deleted.")
 
 def edit_task():
     if not tasks:
         print("No tasks found.")
         return
     try:
-        number = int(input("Enter the task number: "))
+        task_id = int(input("Enter task id: "))
     except ValueError:
         print("Please enter a valid number.")
         return
-    if number < 1 or number > len(tasks):
-        print("Invalid task number.")
+
+    task = find_task_by_id(task_id)
+
+    if task is None:
+        print("Task not found.")
         return
-    tasks[number - 1]["title"] = input("Enter new title: ")
+    
+    task["title"] = input("Enter new title: ")
     save_tasks(tasks)
     print("Task updated.")
+
+def get_next_id():
+    if not tasks:
+        return 1
+    return max(task["id"] for task in tasks) + 1
+
+def find_task_by_id(task_id):
+    for task in tasks:
+        if task["id"] ==task_id:
+            return task
+    return None
 
 tasks = load_tasks()
 menu()
