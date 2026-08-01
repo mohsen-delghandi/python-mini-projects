@@ -1,19 +1,5 @@
-import json
-
+from storage import save_tasks, load_tasks
 tasks = []
-
-def save_tasks():
-    with open("tasks.json", "w") as file:
-        json.dump(tasks, file, indent=4)
-
-def load_tasks():
-    global tasks
-    try:
-        with open("tasks.json", "r") as file:
-            tasks = json.load(file)
-    except FileNotFoundError:
-        tasks = []
-        print("No saved tasks found.")
 
 def add_task():
     title = input("Enter task title: ")
@@ -22,7 +8,7 @@ def add_task():
         "done": False
     }
     tasks.append(task)
-    save_tasks()
+    save_tasks(tasks)
 
 def show_tasks():
     if not tasks:
@@ -78,7 +64,7 @@ def complete_task():
         print("Invalid task number.")
     else:
         tasks[number - 1]["done"] = True
-        save_tasks()
+        save_tasks(tasks)
         print("Task completed.")
 
 def delete_task():
@@ -94,7 +80,7 @@ def delete_task():
         print("Invalid task number.")
     else:
         tasks.pop(number - 1)
-        save_tasks()
+        save_tasks(tasks)
         print("Task deleted.")
 
 def edit_task():
@@ -110,8 +96,8 @@ def edit_task():
         print("Invalid task number.")
         return
     tasks[number - 1]["title"] = input("Enter new title: ")
-    save_tasks()
+    save_tasks(tasks)
     print("Task updated.")
 
-load_tasks()
+tasks = load_tasks()
 menu()
