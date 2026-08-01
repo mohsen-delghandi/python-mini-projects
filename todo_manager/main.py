@@ -8,8 +8,12 @@ def save_tasks():
 
 def load_tasks():
     global tasks
-    with open("tasks.json", "r") as file:
-        tasks = json.load(file)
+    try:
+        with open("tasks.json", "r") as file:
+            tasks = json.load(file)
+    except FileNotFoundError:
+        tasks = []
+        print("No saved tasks found.")
 
 def add_task():
     title = input("Enter task title: ")
@@ -39,7 +43,11 @@ def menu():
         print("3. Complete Task")
         print("4. Delete Task")
         print("5. Exit")
-        selection = int(input("Enter the number: "))
+        try:      
+            selection = int(input("Enter the number: "))
+        except ValueError:
+            print("Please enter a valid number.")
+            continue
         if selection == 1:
             add_task()
         elif selection == 2:
@@ -52,12 +60,17 @@ def menu():
             break
         else:
             print("Invalid option.")
+        
 
 def complete_task():
     if not tasks:
         print("No tasks found.")
         return
-    number = int(input("Enter the task number: "))
+    try:
+        number = int(input("Enter the task number: "))
+    except ValueError:
+        print("Please enter a valid number.")
+        return
     if number < 1 or number > len(tasks):
         print("Invalid task number.")
     else:
@@ -69,7 +82,11 @@ def delete_task():
     if not tasks:
         print("No tasks found.")
         return
-    number = int(input("Enter the number: "))
+    try:
+        number = int(input("Enter the task number: "))
+    except ValueError:
+        print("Please enter a valid number.")
+        return
     if number < 1 or number > len(tasks):
         print("Invalid task number.")
     else:
