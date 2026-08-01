@@ -25,7 +25,7 @@ def menu():
         print("1. Add Task")
         print("2. Show Tasks")
         print("3. Complete Task")
-        print("4, Delete Task")
+        print("4. Delete Task")
         print("5. Exit")
         selection = int(input("Enter the number: "))
         if selection == 1:
@@ -42,11 +42,25 @@ def menu():
             print("Invalid option.")
 
 def complete_task():
+    if not tasks:
+        print("No tasks found.")
+        return
     number = int(input("Enter the task number: "))
-    tasks[number - 1]["done"] = True
+    if number < 1 or number > len(tasks):
+        print("Invalid task number.")
+    else:
+        tasks[number - 1]["done"] = True
+        print("Task completed.")
 
 def delete_task():
+    if not tasks:
+        print("No tasks found.")
+        return
     number = int(input("Enter the number: "))
-    tasks.pop(number - 1)
+    if number < 1 or number > len(tasks):
+        print("Invalid task number.")
+    else:
+        tasks.pop(number - 1)
+        print("Task deleted.")
 
 menu()
