@@ -1,3 +1,4 @@
+from utils import get_menu_choice
 from contacts import (
     add_contact,
     show_contacts,
@@ -34,17 +35,6 @@ def main():
             delete_contact()
         elif item_number == 6 :
             toggle_favorite()
-
-def get_menu_choice():
-    try:
-        item_number = int(input("Please select item:"))
-    except ValueError:
-        print("Invalid option.")
-        return
-    if 1 <= item_number <= 7:
-        return item_number
-    else:
-        print("Invalid option.")
 
 if __name__ == "__main__":
     main()
