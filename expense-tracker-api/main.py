@@ -1,5 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from database import (
+                        get_expenses,
+                        create_expense,
+                        get_expense,
+                        update_expense,
+                        delete_expense
+                    )
 
 class ExpenseCreate(BaseModel):
     title: str
@@ -8,9 +15,6 @@ class ExpenseCreate(BaseModel):
 class Expense(ExpenseCreate):
     id: int
 
-expenses = []
-next_id = 1
-
 app = FastAPI()
 
 @app.get("/")
@@ -18,56 +22,65 @@ def home():
     return {"message": "Expense Tracker API"}
 
 @app.post("/expenses")
-def create_expense(expense: ExpenseCreate):
-    global next_id
+def create_expense_endpoint(expense: ExpenseCreate):
 
-    new_expense = Expense(
-        id = next_id,
-        title = expense.title,
-        amount = expense.amount
+    row = create_expense(
+        expense.title,
+        expense.amount
     )
 
-    expenses.append(new_expense)
-    next_id += 1
-
-    return new_expense
+    return {
+        "id": row[0],
+        "title": row[1],
+        "amount": row[2]
+    }
 
 @app.get("/expenses")
-def get_expenses():
-    return expenses
+def get_all_expenses():
+    return get_expenses()
 
 @app.get("/expenses/{expense_id}")
-def get_expense(expense_id: int):
-    for expense in expenses:
-        if expense.id == expense_id:
-            return expense
-    raise HTTPException(
-        status_code=404,
-        detail="Expense not found"
-    )
+def get_expense_endpoint(expense_id: int):
+    row = get_expense(expense_id)
+
+    if row is None:
+        raise HTTPException(
+                status_code=404,
+                detail="Expense not found"
+            )
+
+    return {
+        "id": row[0],
+        "title": row[1],
+        "amount": row[2]
+    }
 
 @app.put("/expenses/{expense_id}")
-def update_expense(expense_id: int, new_expense: ExpenseCreate):
-    for expense in expenses:
-       if expense.id == expense_id:
-           expense.title = new_expense.title
-           expense.amount = new_expense.amount
-           return expense
-    raise HTTPException(
+def update_expense_endpoint(expense_id: int, new_expense: ExpenseCreate):
+    row = update_expense(expense_id,new_expense.title, new_expense.amount)
+
+    if row is None:
+        raise HTTPException(
+                status_code=404,
+                detail="Expense not found"
+            )
+
+    return {
+            "id": row[0],
+            "title": row[1],
+            "amount": row[2]
+    }
+
+@app.delete("/expenses/{expense_id}")
+def delete_expense_endpoint(expense_id: int):
+
+    row = delete_expense(expense_id)
+
+    if row is None:
+
+        raise HTTPException(
             status_code=404,
             detail="Expense not found"
         )
 
-@app.delete("/expenses/{expense_id}")
-def delete_expense(expense_id: int):
-    for expense in expenses:
-        if expense.id == expense_id:
-            expenses.remove(expense)
-            return {
-                "message": "Expense deleted successfully"
-                }
-
-    raise HTTPException(
-        status_code=404,
-        detail="Expense not found"
-    )
+    return {"id": row[0]}
