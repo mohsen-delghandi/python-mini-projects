@@ -1,7 +1,9 @@
 import psycopg
+from psycopg.rows import dict_row
 
 conn = psycopg.connect(
-    "host=localhost dbname=expense_tracker user=expense_user password=expense_pass"
+    "host=localhost dbname=expense_tracker user=expense_user password=expense_pass",
+    row_factory=dict_row
 )
 
 def get_expenses():
