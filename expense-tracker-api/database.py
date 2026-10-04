@@ -1,10 +1,15 @@
+import os
 import psycopg
 from psycopg.rows import dict_row
 
-conn = psycopg.connect(
-    "host=localhost dbname=expense_tracker user=expense_user password=expense_pass",
-    row_factory=dict_row
-)
+def get_connection(dbname):
+    return psycopg.connect(
+        f"host=localhost dbname={dbname} user=expense_user password=expense_pass",
+        row_factory=dict_row
+    )
+
+dbname = os.getenv("APP_ENV", "expense_tracker")
+conn = get_connection(dbname)
 
 def get_expenses():
 
@@ -14,6 +19,8 @@ def get_expenses():
         )
 
         rows = cur.fetchall()
+
+    conn.commit()
 
     return rows
 
@@ -30,7 +37,7 @@ def create_expense(title, amount):
 
         row = cur.fetchone()
 
-    conn.commit
+    conn.commit()
 
     return row
 
@@ -46,6 +53,8 @@ def get_expense(expense_id: int):
         )
 
         row = cur.fetchone()
+
+    conn.commit()
 
     return row
 
@@ -87,3 +96,21 @@ def delete_expense(expense_id:int):
         conn.commit()
 
     return row
+
+def get_expense_summary():
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT
+                title,
+                ROUND(AVG(amount)) AS amount_average
+            FROM expenses
+            GROUP BY title
+            HAVING COUNT(*) >= 2
+            ORDER BY amount_average DESC
+            """
+        )
+
+        rows = cur.fetchall()
+
+    return rows
