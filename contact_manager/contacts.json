@@ -28,5 +28,22 @@
         "image": "",
         "instagram": "@ali",
         "favorite": false
+    },
+    {
+        "id": 6,
+        "name": "Ali",
+        "family": "Ahmadi",
+        "phones": [
+            "0912",
+            "0935"
+        ],
+        "emails": [
+            "ali@gmail.com",
+            "ali@woork.com"
+        ],
+        "address": "Tehran",
+        "image": "",
+        "instagram": "@ali",
+        "favorite": false
     }
 ]
